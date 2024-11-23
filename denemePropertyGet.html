@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Request Demo</title>
+</head>
+<body>
+    <h1>API Request Demo</h1>
+    <div id="result"></div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            axios.get('http://localhost:1806/api/property')
+                .then(function (response) {
+                    console.log(response);
+                    // Display the response in the page
+                    document.getElementById('result').textContent = 
+                        JSON.stringify(response.data, null, 2);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    // Display any errors on the page
+                    document.getElementById('result').textContent = 
+                        'Error: ' + error.message;
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Submission Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .features-section {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <h1>Submit New Property</h1>
+    <form id="propertyForm">
+        <div class="form-group">
+            <label for="title">Title *</label>
+            <input type="text" id="title" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <textarea id="description" rows="4" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Price * (in USD)</label>
+            <input type="number" id="price" required min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="type">Property Type *</label>
+            <select id="type" required>
+                <option value="">Select type</option>
+                <option value="apartment">Apartment</option>
+                <option value="house">House</option>
+                <option value="villa">Villa</option>
+                <option value="land">Land</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status *</label>
+            <select id="status" required>
+                <option value="">Select status</option>
+                <option value="for-sale">For Sale</option>
+                <option value="for-rent">For Rent</option>
+                <option value="sold">Sold</option>
+                <option value="rented">Rented</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <h3>Location *</h3>
+            <label for="city">City</label>
+            <input type="text" id="city" required>
+            
+            <label for="district">District</label>
+            <input type="text" id="district" required>
+            
+            <label for="address">Address</label>
+            <textarea id="address" required></textarea>
+            
+        </div>
+
+        <div class="features-section">
+            <h3>Features</h3>
+            <div class="form-group">
+                <label for="rooms">Number of Rooms</label>
+                <input type="number" id="rooms" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="bathrooms">Number of Bathrooms</label>
+                <input type="number" id="bathrooms" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="size">Size (sqm)</label>
+                <input type="number" id="size" min="0">
+            </div>
+
+            <div class="form-group">
+                <label for="floor">Floor</label>
+                <input type="number" id="floor">
+            </div>
+
+            <div class="form-group">
+                <label for="heating">Heating Type</label>
+                <input type="text" id="heating">
+            </div>
+
+            <div class="form-group">
+                <label for="age">Building Age</label>
+                <input type="number" id="age" min="0">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="images">Image URLs (one per line)</label>
+            <textarea id="images" rows="4" placeholder="Enter image URLs, one per line"></textarea>
+        </div>
+
+        <button type="submit">Submit Property</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <script>
+        document.getElementById('propertyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                price: Number(document.getElementById('price').value),
+                type: document.getElementById('type').value,
+                status: document.getElementById('status').value,
+                location: {
+                    city: document.getElementById('city').value,
+                    district: document.getElementById('district').value,
+                    address: document.getElementById('address').value,
+                    coordinates: {
+                        lat: document.getElementById('lat').value ? Number(document.getElementById('lat').value) : undefined,
+                        lng: document.getElementById('lng').value ? Number(document.getElementById('lng').value) : undefined
+                    }
+                },
+                features: {
+                    rooms: document.getElementById('rooms').value ? Number(document.getElementById('rooms').value) : undefined,
+                    bathrooms: document.getElementById('bathrooms').value ? Number(document.getElementById('bathrooms').value) : undefined,
+                    size: document.getElementById('size').value ? Number(document.getElementById('size').value) : undefined,
+                    floor: document.getElementById('floor').value ? Number(document.getElementById('floor').value) : undefined,
+                    heating: document.getElementById('heating').value || undefined,
+                    age: document.getElementById('age').value ? Number(document.getElementById('age').value) : undefined
+                },
+                images: document.getElementById('images').value
+                    .split('\n')
+                    .map(url => url.trim())
+                    .filter(url => url !== '')
+            };
+
+            const responseDiv = document.getElementById('response');
+            
+            try {
+                const response = await axios.post('http://localhost:1806/api/property', formData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjc0MWE5MzNjNGQ0ZjM4YWVkMjNjMWI1In0sImlhdCI6MTczMjM1NjQwMywiZXhwIjoxNzMyMzYwMDAzfQ.BdnTo1X36AaVvG_UiiUK1zBqeI5Jiz81O6MyhBE58FY'
+                        // Just for a now
+                    }
+                });
+                
+                responseDiv.className = 'success';
+                responseDiv.textContent = 'Property submitted successfully!';
+                console.log('Success:', response.data);
+                
+                // Optional: Clear form after successful submission
+                e.target.reset();
+                
+            } catch (error) {
+                responseDiv.className = 'error';
+                responseDiv.textContent = 'Error: ' + (error.response?.data?.message || error.message);
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
