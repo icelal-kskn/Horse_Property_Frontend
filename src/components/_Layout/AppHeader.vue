@@ -2,7 +2,7 @@
   <header>
     <nav>
       <div class="logo">
-        <img alt="Home Real Estate" class="logo-image" src="../assets/logo.png" >
+        <img alt="Home Real Estate" class="logo-image" src="../../assets/logo.png" >
 
       </div>
       <div class="nav-menu">
@@ -43,9 +43,9 @@ nav {
 }
 
 .logo-image {
-  height: 5rem;
+  height: 3.5rem;
   opacity: 3;
-  filter: brightness(2.5);
+  filter: brightness(3);
 }
 
 .nav-menu {
@@ -60,7 +60,7 @@ nav {
   text-decoration: none;
   justify-content: center;
   cursor: pointer;
-  width: 6.5rem ;
+  width: 5rem ;
   height: 2.5rem;
   font-size: 1rem;
   font-weight: 500;
