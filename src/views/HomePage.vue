@@ -63,13 +63,14 @@
               <h2>Recommended Listing</h2>
               <div class="card-container">
                 <div class="card-row" v-for="i in cardCount" :key="i">
-                  <CardComponent :key="i" :imageUrl="'bg-image.jpeg'" :title="`Ad-${i}`" :city="`City${i}`"
+
+                  <!-- <CardComponent :key="i" :imageUrl="'bg-image.jpeg'" :title="`Ad-${i}`" :city="`City${i}`"
                     :district="`District${i}`" :price="getRandomPrice()">
-                  </CardComponent>
+                  </CardComponent> -->
                 </div>
 
                 <div class="load-more" @click="loadMoreCards()">
-                  <font-awesome-icon icon="chevron-right" />
+                  <v-icon icon="chevron-right" />
                 </div>
 
               </div>
