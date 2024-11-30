@@ -3,9 +3,8 @@
     <nav>
       <div class="logo">
         <img alt="Home Real Estate" class="logo-image" src="../../assets/logo.png" >
-
       </div>
-      <div class="nav-menu">
+      <div class="nav-menu" v-if="!signed">
           <a href="#" class="sign-in">Sign In</a>
           <a href="#" class="register">Register</a>
       </div>
@@ -16,6 +15,11 @@
 <script>
 export default {
   name: 'AppHeader',
+  data(){
+    return{
+      signed: false,
+    }
+  },
 };
 </script>
 

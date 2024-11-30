@@ -62,19 +62,20 @@
             <div class="content">
               <h2>Recommended Listing</h2>
               <div class="card-container">
-                <div class="card-row" v-for="i in cardCount" :key="i">
+                <div class="card-row" v-for="card in cards" :key="card.id">
 
-                  <!-- <CardComponent :key="i" :imageUrl="'bg-image.jpeg'" :title="`Ad-${i}`" :city="`City${i}`"
-                    :district="`District${i}`" :price="getRandomPrice()">
-                  </CardComponent> -->
+                  <CardComponent :imageUrl="card.imageUrl" :title="card.title" :city="card.city"
+                    :district="card.district" :price="card.price" />
                 </div>
 
                 <div class="load-more" @click="loadMoreCards()">
-                  <v-icon icon="chevron-right" />
+                  <v-btn icon>
+                    <v-icon class="load-more-button" size="7rem">mdi-chevron-right</v-icon>
+                  </v-btn>
                 </div>
 
               </div>
-              
+
             </div>
           </div>
         </div>
@@ -94,6 +95,20 @@ export default {
     AppHeader,
     CardComponent
   },
+  mounted() {
+  // Başlangıçta 2 kart yükle
+  for (let i = 0; i < 2; i++) {
+    const newCardIndex = this.cards.length + 1;
+    this.cards.push({
+      id: newCardIndex,
+      title: `Ad-${newCardIndex}`,
+      city: `City${newCardIndex}`,
+      district: `District${newCardIndex}`,
+      price: this.getRandomPrice(),
+      imageUrl: 'bg-image.jpeg'
+    });
+  }
+},
   data() {
     return {
       city: '',
@@ -104,7 +119,7 @@ export default {
       bathrooms: 0,
       bedrooms: 0,
       radius: 0,
-      cardCount: 2,
+      cards: [],
       isLoading: false,
     }
   },
@@ -133,19 +148,30 @@ export default {
     },
 
     loadMoreCards() {
-      this.cardCount -= 2;
+    if (!this.isLoading) {
+      this.isLoading = true;
 
-      if (!this.isLoading) {
-        this.isLoading = true;
-        // Simulate loading more cards from the server
-        setTimeout(() => {
-          this.cardCount += 2;
-          this.isLoading = false;
-        }, 1000);
-      }
+      setTimeout(() => {
+        // Eski kartları kaldır
+        this.cards = []; // Eski kartları temizle
 
-    },
+        // Yeni 2 kart ekle
+        for (let i = 0; i < 2; i++) {
+          const newCardIndex = this.cards.length + 1; // Yeni kartların indexi
+          this.cards.push({
+            id: newCardIndex,
+            title: `Ad-${newCardIndex}`,
+            city: `City${newCardIndex}`,
+            district: `District${newCardIndex}`,
+            price: this.getRandomPrice(),
+            imageUrl: 'bg-image.jpeg'
+          });
+        }
 
+        this.isLoading = false;
+      }, 300); // Animasyon süresi
+    }
+  },
 
   }
 }
@@ -202,6 +228,7 @@ export default {
 
 .content h2 {
   font-size: 1.5rem;
+  margin-top: 0.5rem;
   margin-bottom: 1rem;
   margin-left: 2rem;
   display: flex;
@@ -280,28 +307,20 @@ export default {
   display: flex;
   flex-wrap: wrap;
   margin-left: 2rem;
+  transition: transform 0.3s ease;
 }
 
 .card-container .card-row {
   margin-left: 1rem;
   flex-basis: calc(40% - 0.5rem);
 }
+
 .load-more {
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 7rem;
   margin-top: 1rem;
   cursor: pointer;
-}
-
-.arrow {
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 3px;
-}
-
-.right {
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
 }
 </style>
