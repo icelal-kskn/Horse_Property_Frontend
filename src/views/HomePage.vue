@@ -1,101 +1,115 @@
 <template>
-    <div id="home">
-        <div class="background-container">
-            <img src="../assets/bg-image.jpeg" alt="Background Image">
-            <div class="header-overlay">
-                <AppHeader />
+  <div id="home">
+    <div class="background-container">
+      <img src="../assets/bg-image.jpeg" alt="Background Image">
+      <div class="header-overlay">
+        <AppHeader />
 
-                <div class="row">
-                    <div class="col1">
-                        <div class="up">
-                            <h1>Search, Find, Move In...</h1>
-                        </div>
-                        <div class="content">
-                            <h2>Find Your New Home</h2>
-                            <form>
-                                <div class="searchParams">
-                                    <label for="city">City:</label>
-                                    <input type="text" id="city" placeholder="Select A City" v-model="city">
-                                </div>
-
-                                <div class="searchParams">
-                                    <label for="district">District:</label>
-                                    <input type="text" id="city" placeholder="District" v-model="district">
-                                </div>
-
-                                <div class="searchParams">
-                                    <label for="status">Status:</label>
-                                    <input id="status" type="text" placeholder="Status" v-model="status" />
-                                </div>
-
-                                <div class="searchParams">
-                                    <label for="price-range">Price Range:</label>
-                                    <input id="price-range" type="text" placeholder="From" v-model="priceFrom" />
-                                    <input id="price-range" type="text" placeholder="To" v-model="priceTo">
-                                </div>
-
-                                <div class="searchParams">
-                                    <label for="bathrooms">Bathroom(s):</label>
-                                    <input id="bathrooms" type="number" v-model.number="bathrooms" />
-                                </div>
-
-                                <div class="searchParams">
-                                    <label for="bedrooms">Bedroom(s):</label>
-                                    <input id="bedrooms" type="number" v-model.number="bedrooms" />
-                                </div>
-
-                                <div class="searchParams">
-                                    <label for="radius">Radius:</label>
-                                    <input id="radius" type="number" placeholder="Radius" v-model.number="radius" />
-                                </div>
-
-                                <div class="button-container">
-                                    <button type="button" class="searchButton" @click="searchProperties()">Search
-                                        Properties</button>
-                                </div>
-
-                            </form>
-
-                        </div>
-                    </div>
-                    <div class="col2">
-                        <div class="content">
-                            Recomended listing
-                        </div>
-
-                    </div>
+        <div class="row">
+          <div class="col1">
+            <div class="up">
+              <h1>Search, Find, Move In...</h1>
+            </div>
+            <div class="content">
+              <h2>Find Your New Home</h2>
+              <form>
+                <div class="searchParams">
+                  <label for="city">City:</label>
+                  <input type="text" id="city" placeholder="Select A City" v-model="city">
                 </div>
 
-            </div>
+                <div class="searchParams">
+                  <label for="district">District:</label>
+                  <input type="text" id="city" placeholder="District" v-model="district">
+                </div>
 
+                <div class="searchParams">
+                  <label for="status">Status:</label>
+                  <input id="status" type="text" placeholder="Status" v-model="status" />
+                </div>
+
+                <div class="searchParams">
+                  <label for="price-range">Price Range:</label>
+                  <input id="price-range" type="text" placeholder="From" v-model="priceFrom" />
+                  <input id="price-range" type="text" placeholder="To" v-model="priceTo">
+                </div>
+
+                <div class="searchParams">
+                  <label for="bathrooms">Bathroom(s):</label>
+                  <input id="bathrooms" type="number" v-model.number="bathrooms" />
+                </div>
+
+                <div class="searchParams">
+                  <label for="bedrooms">Bedroom(s):</label>
+                  <input id="bedrooms" type="number" v-model.number="bedrooms" />
+                </div>
+
+                <div class="searchParams">
+                  <label for="radius">Radius:</label>
+                  <input id="radius" type="number" placeholder="Radius" v-model.number="radius" />
+                </div>
+
+                <div class="button-container">
+                  <button type="button" class="searchButton" @click="searchProperties()">Search
+                    Properties</button>
+                </div>
+
+              </form>
+
+            </div>
+          </div>
+          <div class="col2">
+            <div class="content">
+              <h2>Recommended Listing</h2>
+              <div class="card-container">
+                <div class="card-row" v-for="i in cardCount" :key="i">
+                  <CardComponent :key="i" :imageUrl="'bg-image.jpeg'" :title="`Ad-${i}`" :city="`City${i}`"
+                    :district="`District${i}`" :price="getRandomPrice()">
+                  </CardComponent>
+                </div>
+
+                <div class="load-more" @click="loadMoreCards()">
+                  <font-awesome-icon icon="chevron-right" />
+                </div>
+
+              </div>
+              
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 import AppHeader from '@/components/_Layout/AppHeader'
+import CardComponent from '@/components/Widgets/CardComponent';
 import axios from "axios";
 
-export default { 
-    name: 'HomePage',
-    components: {
-        AppHeader
-    },
-    data(){
+export default {
+  name: 'HomePage',
+  components: {
+    AppHeader,
+    CardComponent
+  },
+  data() {
     return {
       city: '',
       district: '',
       status: '',
-      priceFrom:0,
-      priceTo:0,
+      priceFrom: 0,
+      priceTo: 0,
       bathrooms: 0,
       bedrooms: 0,
-      radius: 0
+      radius: 0,
+      cardCount: 2,
+      isLoading: false,
     }
   },
   methods: {
-    searchProperties(){
-      axios.get('http://localhost:1806/api/property/',{
+    searchProperties() {
+      axios.get('http://localhost:1806/api/property/', {
         params: {
           city: this.city,
           district: this.district,
@@ -111,49 +125,70 @@ export default {
       }).catch((error) => {
         console.log(error);
       });
-    }
+    },
+
+    getRandomPrice() {
+      return Math.floor(Math.random() * 1000000);
+    },
+
+    loadMoreCards() {
+      this.cardCount -= 2;
+
+      if (!this.isLoading) {
+        this.isLoading = true;
+        // Simulate loading more cards from the server
+        setTimeout(() => {
+          this.cardCount += 2;
+          this.isLoading = false;
+        }, 1000);
+      }
+
+    },
+
+
   }
 }
 </script>
 
 <style scoped>
 #home {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
 
 .background-container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
+  position: relative;
+  width: 100%;
+  height: 100vh;
 }
 
 .background-container img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 2.85;
-    z-index: 1;
-    filter: brightness(0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 2.85;
+  z-index: 1;
+  filter: brightness(0.7);
 }
 
 .header-overlay {
-    position: relative;
-    z-index: 10;
+  position: relative;
+  z-index: 10;
 }
 
-.up{
+.up {
   display: flex;
   justify-content: start;
   color: whitesmoke;
   margin-left: 0.2rem;
 }
+
 .content {
   display: flex;
   flex-direction: column;
@@ -163,14 +198,16 @@ export default {
   border-radius: 8px;
   background-color: #E5E7F4;
 }
-.content h2{
+
+.content h2 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   margin-left: 2rem;
   display: flex;
   justify-content: start;
 }
-.content form div.searchParams{
+
+.content form div.searchParams {
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -178,28 +215,34 @@ export default {
   justify-content: flex-start;
   margin-bottom: 0.5rem;
 }
-#price-range{
+
+#price-range {
   display: flex;
   width: 8rem;
 }
-.content form div label{
+
+.content form div label {
   width: 8rem;
   text-align: right;
 }
-.content form div input{
+
+.content form div input {
   width: 15rem;
   padding: 0.5rem;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
-.button-container{
+
+.button-container {
   display: flex;
   justify-content: flex-end;
 }
-.searchButton:hover{
+
+.searchButton:hover {
   background-color: #010237;
 }
-.searchButton{
+
+.searchButton {
   padding: 0.5rem;
   border-radius: 8px;
   border-color: black;
@@ -212,9 +255,9 @@ export default {
 .row {
   display: flex;
   flex-direction: row;
-  justify-content: space-between; 
-  align-items: flex-start; 
-  gap: 1rem; 
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
   padding: 1rem;
 }
 
@@ -226,9 +269,38 @@ export default {
 }
 
 .col2 {
-  flex: 1.5; 
+  flex: 1.5;
   padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 2rem;
+}
+
+.card-container .card-row {
+  margin-left: 1rem;
+  flex-basis: calc(40% - 0.5rem);
+}
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
 }
 </style>
