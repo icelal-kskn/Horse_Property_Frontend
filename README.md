@@ -15,10 +15,8 @@ npm run serve
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Proje 
+Bu dosya sadece frontend kodlarını içermektedir
+Bu projeyi çalıştırabilmeniz için backend tarafının da aktif olması gerekmektedir
+Aynı işletim sisteminde çalıştırabileceğiniz gibi başka işletim sistemi de kullanabilirsiniz
+Benim tercihim backend tarafının stabil bir linux distrosunda çalıştırılması olacaktır

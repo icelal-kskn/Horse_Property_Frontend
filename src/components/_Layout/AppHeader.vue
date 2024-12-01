@@ -2,11 +2,11 @@
   <header>
     <nav>
       <div class="logo">
-        <img alt="Home Real Estate" class="logo-image" src="../../assets/logo.png" >
+        <a href="/"><img alt="Home Real Estate" class="logo-image" src="../../assets/logo.png"></a>
       </div>
       <div class="nav-menu" v-if="!signed">
-          <a href="#" class="sign-in">Sign In</a>
-          <a href="#" class="register">Register</a>
+          <a href="/sign-in" class="sign-in">Sign In</a>
+          <a href="/register" class="register">Register</a>
       </div>
     </nav>
   </header>

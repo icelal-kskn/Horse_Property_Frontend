@@ -2,6 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 
 const HomePage = () => import('@/views/HomePage.vue') //Lazy Load
+const SignInPage = () => import('@/views/SignInPage.vue')
+const RegisterPage = () => import('@/views/RegisterPage.vue')
+
 
 
 Vue.use(VueRouter);
@@ -11,6 +14,16 @@ const routes = [
       path: '/',
       name: 'Home',
       component: HomePage
+    },
+    {
+      path: '/sign-in',
+      name: 'SignInPage',
+      component: SignInPage
+    },
+    {
+      path: '/register',
+      name: 'RegisterPage',
+      component: RegisterPage
     }
 ];
 
