@@ -3,87 +3,97 @@
     <div class="header-overlay">
       <AppHeader />
     </div>
-        <div class="row">
-          <div class="col1">
-            <div class="up">
-              <h1>Search, Find, Move In...</h1>
+    <div class="row">
+      <div class="col1">
+        <div class="up">
+          <h1>Search, Find, Move In...</h1>
+        </div>
+        <div class="content">
+          <h2>Find Your New Home</h2>
+          <form>
+            <div class="searchParams">
+              <label for="city">City:</label>
+              <select id="city" v-model="city">
+                <option value="" disabled selected hidden>Select A City</option>
+                <option value="istanbul">İstanbul</option>
+                <option value="izmir">Ankara</option>
+                <option value="manisa">Manisa</option>
+              </select>
             </div>
-            <div class="content">
-              <h2>Find Your New Home</h2>
-              <form>
-                <div class="searchParams">
-                  <label for="city">City:</label>
-                  <input type="text" id="city" placeholder="Select A City" v-model="city">
-                </div>
 
-                <div class="searchParams">
-                  <label for="district">District:</label>
-                  <input type="text" id="city" placeholder="District" v-model="district">
-                </div>
-
-                <div class="searchParams">
-                  <label for="status">Status:</label>
-                  <input id="status" type="text" placeholder="Status" v-model="status" />
-                </div>
-
-                <div class="searchParams">
-                  <label for="price-range">Price Range:</label>
-                  <input id="price-range" type="text" placeholder="From" v-model="priceFrom" />
-                  <input id="price-range" type="text" placeholder="To" v-model="priceTo">
-                </div>
-
-                <div class="searchParams">
-                  <label for="bathrooms">Bathroom(s):</label>
-                  <input id="bathrooms" type="number" v-model.number="bathrooms" />
-                </div>
-
-                <div class="searchParams">
-                  <label for="bedrooms">Bedroom(s):</label>
-                  <input id="bedrooms" type="number" v-model.number="bedrooms" />
-                </div>
-
-                <div class="searchParams">
-                  <label for="radius">Radius:</label>
-                  <input id="radius" type="number" placeholder="Radius" v-model.number="radius" />
-                </div>
-
-                <div class="button-container">
-                  <button type="button" class="searchButton" @click="searchProperties()">Search
-                    Properties</button>
-                </div>
-
-              </form>
-
+            <div class="searchParams">
+              <label for="district">District:</label>
+              <input type="text" id="city" placeholder="District" v-model="district">
             </div>
-          </div>
-          <div class="col2">
-            <div class="content">
-              <h2>Recommended Listing</h2>
-              <div class="card-container">
-                <div class="card-row" v-for="card in cards" :key="card.id">
 
-                  <CardComponent :imageUrl="card.imageUrl" :title="card.title" :city="card.city"
-                    :district="card.district" :price="card.price" :fav="card.fav" />
-                </div>
-
-                <div class="load-more" @click="loadMoreCards()">
-                  <v-btn icon>
-                    <v-icon class="load-more-button" size="7rem">mdi-chevron-right</v-icon>
-                  </v-btn>
-                </div>
-
-              </div>
-
+            <div class="searchParams">
+              <label for="status">Status:</label>
+              <select id="status" v-model="status">
+                <option value="" disabled selected hidden>Select</option>
+                <option value="for-sale">For Sale</option>
+                <option value="for-rent">For Rent</option>
+                <option value="sold">Sold</option>
+                <option value="rented">Rented</option>
+              </select>
             </div>
-          </div>
+
+            <div class="searchParams">
+              <label for="price-range">Price Range:</label>
+              <input id="price-range" type="text" placeholder="From" v-model="priceFrom" />
+              <input id="price-range" type="text" placeholder="To" v-model="priceTo">
+            </div>
+
+            <div class="searchParams">
+              <label for="bathrooms">Bathroom(s):</label>
+              <input id="bathrooms" type="number" v-model.number="bathrooms" />
+            </div>
+
+            <div class="searchParams">
+              <label for="bedrooms">Bedroom(s):</label>
+              <input id="bedrooms" type="number" v-model.number="bedrooms" />
+            </div>
+
+            <div class="searchParams">
+              <label for="radius">Radius:</label>
+              <input id="radius" type="number" placeholder="Radius" v-model.number="radius" />
+            </div>
+
+            <div class="button-container">
+              <button type="button" class="searchButton" @click="searchProperties()">Search
+                Properties</button>
+            </div>
+
+          </form>
+
         </div>
       </div>
+      <div class="col2">
+        <div class="content">
+          <h2>Recommended Listing</h2>
+          <div class="card-container">
+            <div class="card-row" v-for="card in cards" :key="card.id">
+
+              <CardComponent :imageUrl="card.imageUrl" :title="card.title" :city="card.city" :district="card.district"
+                :price="card.price" :fav="card.fav" />
+            </div>
+
+            <div class="load-more" @click="loadMoreCards()">
+              <v-btn icon>
+                <v-icon class="load-more-button" size="7rem">mdi-chevron-right</v-icon>
+              </v-btn>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import AppHeader from '@/components/_Layout/AppHeader'
 import CardComponent from '@/components/Widgets/CardComponent';
-import axios from "axios";
 
 export default {
   name: 'HomePage',
@@ -92,19 +102,20 @@ export default {
     CardComponent
   },
   mounted() {
-  // Başlangıçta 2 kart yükle
-  for (let i = 0; i < 2; i++) {
-    const newCardIndex = this.cards.length + 1;
-    this.cards.push({
-      id: newCardIndex,
-      title: `Ad-${newCardIndex}`,
-      city: `City${newCardIndex}`,
-      district: `District${newCardIndex}`,
-      price: this.getRandomPrice(),
-      imageUrl: 'bg-image.jpeg'
-    });
-  }
-},
+    // Başlangıçta 2 kart yükle
+    for (let i = 0; i < 2; i++) {
+      const newCardIndex = this.counter + 1;
+      this.cards.push({
+        id: newCardIndex,
+        title: `Ad-${newCardIndex}`,
+        city: `City${newCardIndex}`,
+        district: `District${newCardIndex}`,
+        price: this.getRandomPrice(),
+        imageUrl: 'bg-image.jpeg'
+      });
+      this.counter++;
+    }
+  },
   data() {
     return {
       city: '',
@@ -122,21 +133,18 @@ export default {
   },
   methods: {
     searchProperties() {
-      axios.get('http://localhost:1806/api/property/', {
-        params: {
-          city: this.city,
-          district: this.district,
-          status: this.status,
-          priceFrom: this.priceFrom,
-          priceTo: this.priceTo,
-          bathrooms: this.bathrooms,
-          bedrooms: this.bedrooms,
-          radius: this.radius
+      this.$router.push({
+        path: '/searched',
+        query: {
+          city: this.city || undefined,
+          district: this.district || undefined,
+          status: this.status || undefined,
+          priceFrom: this.priceFrom || undefined,
+          priceTo: this.priceTo || undefined,
+          bathrooms: this.bathrooms || undefined,
+          bedrooms: this.bedrooms || undefined,
+          radius: this.radius || undefined
         }
-      }).then((response) => {
-        console.log(response.data); //TODO: DELETE LOG
-      }).catch((error) => {
-        console.log(error);
       });
     },
 
@@ -145,31 +153,31 @@ export default {
     },
 
     loadMoreCards() {
-    if (!this.isLoading) {
-      this.isLoading = true;
+      if (!this.isLoading) {
+        this.isLoading = true;
 
-      setTimeout(() => {
-        this.cards = []
-        // Yeni 2 kart ekle
-        for (let i = 0; i < 2; i++) {
-          const newCardIndex = this.counter + 1; // Yeni kartların indexi
-          this.cards.push({
-            id: newCardIndex,
-            title: `Ad-${newCardIndex}`,
-            city: `City${newCardIndex}`,
-            district: `District${newCardIndex}`,
-            price: this.getRandomPrice(),
-            imageUrl: 'bg-image.jpeg',
-            fav: false
-          });
-          this.counter++;
-        }
+        setTimeout(() => {
+          this.cards = []
+          // Yeni 2 kart ekle
+          for (let i = 0; i < 2; i++) {
+            const newCardIndex = this.counter + 1; // Yeni kartların indexi
+            this.cards.push({
+              id: newCardIndex,
+              title: `Ad-${newCardIndex}`,
+              city: `City${newCardIndex}`,
+              district: `District${newCardIndex}`,
+              price: this.getRandomPrice(),
+              imageUrl: 'bg-image.jpeg',
+              fav: false
+            });
+            this.counter++;
+          }
 
 
-        this.isLoading = false;
-      }, 300); // Animasyon süresi
-    }
-  },
+          this.isLoading = false;
+        }, 300); // Animasyon süresi
+      }
+    },
 
   }
 }
@@ -235,6 +243,12 @@ export default {
 }
 
 .content form div input {
+  width: 15rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.content form div select {
   width: 15rem;
   padding: 0.5rem;
   border-radius: 8px;

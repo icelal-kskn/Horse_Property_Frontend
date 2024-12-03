@@ -4,7 +4,7 @@ import VueRouter from "vue-router";
 const HomePage = () => import('@/views/HomePage.vue') //Lazy Load
 const SignInPage = () => import('@/views/SignInPage.vue')
 const RegisterPage = () => import('@/views/RegisterPage.vue')
-
+const SearchedPage = () => import('@/views/SearchedPage.vue')
 
 
 Vue.use(VueRouter);
@@ -24,6 +24,11 @@ const routes = [
       path: '/register',
       name: 'RegisterPage',
       component: RegisterPage
+    },
+    {
+      path: '/searched',
+      name: 'SearchedPage',
+      component: SearchedPage
     }
 ];
 
