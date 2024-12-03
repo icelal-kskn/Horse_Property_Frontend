@@ -1,10 +1,8 @@
 <template>
   <div id="home">
-    <div class="background-container">
-      <img src="../assets/bg-image.jpeg" alt="Background Image">
-      <div class="header-overlay">
-        <AppHeader />
-
+    <div class="header-overlay">
+      <AppHeader />
+    </div>
         <div class="row">
           <div class="col1">
             <div class="up">
@@ -65,7 +63,7 @@
                 <div class="card-row" v-for="card in cards" :key="card.id">
 
                   <CardComponent :imageUrl="card.imageUrl" :title="card.title" :city="card.city"
-                    :district="card.district" :price="card.price" />
+                    :district="card.district" :price="card.price" :fav="card.fav" />
                 </div>
 
                 <div class="load-more" @click="loadMoreCards()">
@@ -80,8 +78,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -121,6 +117,7 @@ export default {
       radius: 0,
       cards: [],
       isLoading: false,
+      counter :0,
     }
   },
   methods: {
@@ -152,21 +149,22 @@ export default {
       this.isLoading = true;
 
       setTimeout(() => {
-        // Eski kartları kaldır
-        this.cards = []; // Eski kartları temizle
-
+        this.cards = []
         // Yeni 2 kart ekle
         for (let i = 0; i < 2; i++) {
-          const newCardIndex = this.cards.length + 1; // Yeni kartların indexi
+          const newCardIndex = this.counter + 1; // Yeni kartların indexi
           this.cards.push({
             id: newCardIndex,
             title: `Ad-${newCardIndex}`,
             city: `City${newCardIndex}`,
             district: `District${newCardIndex}`,
             price: this.getRandomPrice(),
-            imageUrl: 'bg-image.jpeg'
+            imageUrl: 'bg-image.jpeg',
+            fav: false
           });
+          this.counter++;
         }
+
 
         this.isLoading = false;
       }, 300); // Animasyon süresi
@@ -187,27 +185,8 @@ export default {
   overflow: hidden;
 }
 
-.background-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-}
-
-.background-container img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 2.85;
-  z-index: 1;
-  filter: brightness(0.7);
-}
-
 .header-overlay {
   position: relative;
-  z-index: 10;
 }
 
 .up {

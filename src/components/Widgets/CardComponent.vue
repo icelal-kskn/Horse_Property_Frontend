@@ -10,7 +10,7 @@
         </div>
         <div class="col2">
           Add to fav.
-          <v-btn icon :color="color" @click="addToFavorites">
+          <v-btn icon :color="color" @click="addToFavorites()">
             <v-icon >mdi-heart</v-icon> 
           </v-btn>
           <button @click="detailClicked()" class="wiew-more-button">View More</button>
@@ -65,38 +65,36 @@ export default {
     price: {
       type: Number,
       required: true
+    },
+    fav:{
+      type: Boolean,
+      required: true,
+      default: false
     }
   },
   data() {
     return {
       dialog: false,
       color: 'black',
-      fav:false
+      isFavorite: this.$props.fav
     }
   },
   mounted(){
-    this.isFavorite();
+    console.log(this.isFavorite)
   },
   methods: {
     detailClicked() {
       this.dialog = true;
-      console.log('View More clicked', this.imageUrl, this.title, this.city, this.district, this.price);
     },
     detailClosed() {
       this.dialog = false;
       console.log('Close clicked');
     },
     addToFavorites() {
-      this.fav = !this.fav;
-      this.color = this.fav ? 'black' : 'pink';
-      console.log('Add to fav. clicked');
+      this.isFavorite = !this.isFavorite;
+      this.color = this.isFavorite ?  'pink' : 'black';
+      console.log(this.isFavorite);
     },
-    isFavorite(){
-      this.fav=false
-      //Server operation goes there
-
-    }
-
   },
 }
 </script>

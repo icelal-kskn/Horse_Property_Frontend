@@ -1,22 +1,46 @@
 <template>
-    <div id="sign-in">
-        <div class="background-container">
-            <img src="../assets/bg-image.jpeg" alt="Background Image">
-            <div class="header-overlay">
-                <AppHeader />
-            </div>
-        </div>
+  <div id="sign-in">
+    <div class="header-overlay mb-6">
+      <AppHeader />
     </div>
+    <div class="content"> 
+      <h2 class="mb-12 d-flex align-center justify-center mt-12">Login</h2>
+      <v-form>
+        <v-row class="d-flex justify-center">
+          <v-col cols="6">
+            <v-text-field v-model="email" label="E-mail" type="email" required outlined ></v-text-field>
+            <v-text-field v-model="password" label="Password" type="password" required outlined ></v-text-field>
+          </v-col>
+        </v-row>
+        <div style="display: flex; justify-content: end;">
+          <v-btn @click="loginButton" color="#010237C4" style="border: 1px solid black; color: white;">
+            Login
+          </v-btn>
+        </div>
+      </v-form>
+    </div>
+  </div>
 </template>
 
 <script>
 import AppHeader from '@/components/_Layout/AppHeader'
 
 export default {
-    name: 'SignInPage',
-    components: {
-        AppHeader,
+  name: 'SignInPage',
+  components: {
+      AppHeader,
+  },
+  data() {
+    return {
+      email: '',
+      password: ''
     }
+  },
+  methods: {
+    loginButton() {
+      console.log(`Email: ${this.email}`,`Password: ${this.password}`)
+    }
+  }
 };
 </script>
 
@@ -28,29 +52,16 @@ export default {
   text-align: center;
   color: #2c3e50;
   overflow: hidden;
+  justify-content: center
 }
-
-.background-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-}
-
-.background-container img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 2.85;
-  z-index: 1;
-  filter: brightness(0.7);
-}
-
-.header-overlay {
-  position: relative;
-  z-index: 10;
+.content {
+  width: 60%;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #E5E7F4;
+  margin-bottom: 1rem;
 }
 
 </style>
