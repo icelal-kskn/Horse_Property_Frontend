@@ -5,7 +5,7 @@ const HomePage = () => import('@/views/HomePage.vue') //Lazy Load
 const SignInPage = () => import('@/views/SignInPage.vue')
 const RegisterPage = () => import('@/views/RegisterPage.vue')
 const SearchedPage = () => import('@/views/SearchedPage.vue')
-
+const DashboardPage = () => import('@/views/DashboardPage.vue')
 
 Vue.use(VueRouter);
 
@@ -29,6 +29,11 @@ const routes = [
       path: '/searched',
       name: 'SearchedPage',
       component: SearchedPage
+    },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: DashboardPage
     }
 ];
 

@@ -5,6 +5,9 @@
         </div>
         <div class="content">
             <h2 class="mb-12 d-flex align-center justify-center mt-12">Create Your Account</h2>
+
+            <error-dialog ref="errorDialog" :error="errorData" />
+
             <v-form>
                 <v-row class="">
                     <v-col>
@@ -51,11 +54,14 @@
 
 <script>
 import AppHeader from '@/components/_Layout/AppHeader'
+import axios from '@/plugins/axios'
+import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
 
 export default {
     name: 'RegisterPage',
     components: {
         AppHeader,
+        ErrorDialog,
     },
     data() {
         return {
@@ -69,17 +75,82 @@ export default {
             month: null,
             year: null,
             days: Array.from({ length: 31 }, (_, i) => i + 1),
-            months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            errorData: { type: '', message: '' },
         }
     },
     methods: {
-        createButton() {
-            console.log(`Email:${this.email} Password:${this.password}`)
-            console.log(`Phone:${this.phone}`)
-            console.log(`Name:${this.fname} ${this.lname}`)
-            console.log(`Password:${this.password} Confirm Password:${this.confirmPassword}`)
-            console.log(`Day:${this.day} Month:${this.month} Year:${this.year}`)
+        async createButton() {
+            if (!this.validateForm()) {
+                this.showErrorDialog('Error', this.errorData.message);
+                return null;
+            }
+            try {
+
+                const payload = {
+                    email: this.email,
+                    password: this.password,
+                    fullName: `${this.fname} ${this.lname}`,
+                    phone: this.phone,
+                };
+
+                const response = await axios.post('api/user/register', payload);
+
+                localStorage.setItem('token', response.data.token);
+                console.log("Registration successful:", response.data, "Token:", response.data.token);
+                this.$router.push('/dashboard');
+
+            } catch (error) {
+                let errorMessage = 'Registration failed';
+                if (error.response) {
+                    errorMessage = error.response.data.message || 'An error occurred during registration';
+                } else if (error.request) {
+                    errorMessage = 'No response from server';
+                }
+                this.showErrorDialog('Error', errorMessage);
+                console.log('Registration error:', error);
+            }
+        },
+        validateForm() {
+            // Basic form validation
+            if (!this.email) {
+                this.showErrorDialog('Error', 'Email is required');
+                return false;
+            }
+
+            if (!this.password) {
+                this.showErrorDialog('Error', 'Password is required');
+                return false;
+            }
+
+            if (this.password !== this.confirmPassword) {
+                this.showErrorDialog('Error', 'Passwords do not match');
+                return false;
+            }
+
+            if (!this.fname || !this.lname) {
+                this.showErrorDialog('Error', 'First and last name are required');
+                return false;
+            }
+
+            if (!this.phone) {
+                this.showErrorDialog('Error', 'Phone number is required');
+                return false;
+            }
+
+            // Additional validation for birth date (optional)
+            if (!this.day || !this.month || !this.year) {
+                this.showErrorDialog('Error', 'Complete birth date is required');
+                return false;
+            }
+            return true;
+        },
+
+        showErrorDialog(type, message) {
+            this.errorData = { type, message };
+            this.$refs.errorDialog.show();
         }
+
     }
 };
 </script>

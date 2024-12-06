@@ -8,6 +8,8 @@
           <a href="/sign-in" class="sign-in">Sign In</a>
           <a href="/register" class="register">Register</a>
       </div>
+      <div class="nav-menu" v-else> </div>
+      <!-- TODO: IMPLEMENT THIS -->
     </nav>
   </header>
 </template>
@@ -15,6 +17,9 @@
 <script>
 export default {
   name: 'AppHeader',
+  mounted() {
+    this.signed = localStorage.getItem('token') ? true : false;
+  },
   data(){
     return{
       signed: false,
