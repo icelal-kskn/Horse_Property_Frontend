@@ -5,7 +5,7 @@
         <v-card-title class="d-flex justify-center text-center" style="font-size: 2rem; font-weight: bold;">
           {{ error.type }}
           <v-spacer></v-spacer>
-          <v-btn icon @click="dialogVisible = false">
+          <v-btn icon @click="close()">
             <v-icon color="white">mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -35,6 +35,10 @@
     methods: {
       show() {
         this.dialogVisible = true;
+      },
+      close() {
+        this.dialogVisible = false;
+        this.$emit('dialogClosed');
       },
     },
   };

@@ -8,8 +8,35 @@
           <a href="/sign-in" class="sign-in">Sign In</a>
           <a href="/register" class="register">Register</a>
       </div>
-      <div class="nav-menu" v-else> </div>
-      <!-- TODO: IMPLEMENT THIS -->
+      <div class="nav-menu" v-else>
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-avatar
+              v-bind="attrs"
+              v-on="on"
+              class=""
+            > <img src="../../assets/dummyAvatar.png" alt="Avatar"></v-avatar>
+          </template>
+          <v-list>
+            <v-list-item link href="/account-settings">
+              <v-list-item-title>Account Settings</v-list-item-title>
+            </v-list-item>
+            <v-list-item link href="/favorites">
+              <v-list-item-title>Favorites</v-list-item-title>
+            </v-list-item>
+            <v-list-item link href="/my-estate">
+              <v-list-item-title>My Estates</v-list-item-title>
+            </v-list-item>
+            <v-list-item link href="/dashboard">
+              <v-list-item-title>My Dashboard</v-list-item-title>
+            </v-list-item>
+            <v-list-item @click="logout">
+              <v-list-item-title>Log Out</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
+
     </nav>
   </header>
 </template>
@@ -25,6 +52,13 @@ export default {
       signed: false,
     }
   },
+  methods: {
+    logout(){
+      localStorage.removeItem('token');
+      this.signed = false;
+      this.$router.push('/sign-in');
+    },
+  }
 };
 </script>
 
@@ -78,8 +112,6 @@ nav {
   border-width: 0.1rem;
   border-radius: 8px;
 }
-
-
 
 
 .sign-in{

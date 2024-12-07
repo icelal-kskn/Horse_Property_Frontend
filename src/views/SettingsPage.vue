@@ -1,26 +1,14 @@
 <template>
-    <div id="dashboard">
+    <div id="settings">
 
         <div class="header-overlay">
             <AppHeader />
         </div>
 
         <div class="content">
-
+            <h1>Settings</h1>
             <error-dialog ref="errorDialog" :error="errorData"/>
-            <h2 class="ml-8 d-flex justify-start">Dashboard Page</h2>
-            <v-row>
-                <v-col cols="6">
-                    <h1>Wiews</h1>
-                    <!-- wiew operation goes there -->
-                </v-col>
-                <v-col cols="6">
-                    <h1>Favorites</h1>
-                    <!-- Favorites op goes here -->
-                </v-col>
-            </v-row>
         </div>
-
     </div>
 </template>
 
@@ -29,14 +17,13 @@ import AppHeader from '@/components/_Layout/AppHeader.vue';
 import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
 
 export default{
-    name: 'DashboardPage',
+    name: 'SettingsPage',
     components: {
         AppHeader,
         ErrorDialog,
     },
     data(){
         return{
-            userType:'',
             errorData: { type: '', message: '' },
 
         }
@@ -61,7 +48,7 @@ export default{
 </script>
 
 <style scoped>
-#dashboard {
+#settings {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
