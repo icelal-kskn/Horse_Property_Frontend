@@ -18,8 +18,8 @@
             > <img src="../../assets/dummyAvatar.png" alt="Avatar"></v-avatar>
           </template>
           <v-list>
-            <v-list-item link href="/account-settings">
-              <v-list-item-title>Account Settings</v-list-item-title>
+            <v-list-item link href="/my-profile">
+              <v-list-item-title>Profile</v-list-item-title>
             </v-list-item>
             <v-list-item link href="/favorites">
               <v-list-item-title>Favorites</v-list-item-title>

@@ -39,8 +39,8 @@
 
             <div class="searchParams">
               <label for="price-range">Price Range:</label>
-              <input id="price-range" type="text" placeholder="From" v-model="priceFrom" />
-              <input id="price-range" type="text" placeholder="To" v-model="priceTo">
+              <input id="price-range" type="number" placeholder="From" v-model="priceFrom" />
+              <input id="price-range" type="number" placeholder="To" v-model="priceTo">
             </div>
 
             <div class="searchParams">
@@ -139,8 +139,8 @@ export default {
           city: this.city || undefined,
           district: this.district || undefined,
           status: this.status || undefined,
-          priceFrom: this.priceFrom || undefined,
-          priceTo: this.priceTo || undefined,
+          minPrice: this.priceFrom || undefined,
+          maxPrice: this.priceTo || undefined,
           bathrooms: this.bathrooms || undefined,
           bedrooms: this.bedrooms || undefined,
           radius: this.radius || undefined

@@ -6,7 +6,7 @@ const SignInPage = () => import('@/views/SignInPage.vue')
 const RegisterPage = () => import('@/views/RegisterPage.vue')
 const SearchedPage = () => import('@/views/SearchedPage.vue')
 const DashboardPage = () => import('@/views/DashboardPage.vue')
-const SettingsPage = () => import('@/views/SettingsPage.vue')
+const ProfilePage = () => import('@/views/ProfilePage.vue')
 const FavoritesPage = () => import('@/views/FavoritesPage.vue')
 const MyEstatePage = () => import('@/views/MyEstatePage.vue')
 
@@ -40,9 +40,9 @@ const routes = [
       component: DashboardPage
     },
     {
-      path: '/account-settings',
+      path: '/my-profile',
       name: 'Settings',
-      component: SettingsPage
+      component: ProfilePage
     },
     {
       path: '/favorites',

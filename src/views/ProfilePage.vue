@@ -6,7 +6,7 @@
         </div>
 
         <div class="content">
-            <h1>Settings</h1>
+            <h1>Profile</h1>
             <error-dialog ref="errorDialog" :error="errorData"/>
         </div>
     </div>
@@ -17,7 +17,7 @@ import AppHeader from '@/components/_Layout/AppHeader.vue';
 import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
 
 export default{
-    name: 'SettingsPage',
+    name: 'ProfilePage',
     components: {
         AppHeader,
         ErrorDialog,

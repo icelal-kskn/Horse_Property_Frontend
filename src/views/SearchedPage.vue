@@ -4,81 +4,125 @@
             <AppHeader />
         </div>
         <div class="content">
-            <div>
+            <error-dialog ref="errorDialog" :error="errorData" />
+            <div v-if="loading" class="loading">Loading...</div>
+            <div v-else>
+
                 <v-row>
-                    <v-col v-for="card in cards" :key="card.id" cols="12" sm="6" md="4" lg="3">
-                        <CardComponent :imageUrl="card.imageUrl" :title="card.title" :city="card.city"
-                            :district="card.district" :price="card.price" :fav="card.isFavorite" />
+                    <v-col v-for="card in properties" :key="card._id" cols="12" sm="6" md="4" lg="3">
+                        <CardComponent
+                            :imageUrl="card.images && card.images.length > 0 ? card.images[0] : 'default-image.jpg'"
+                            :title="card.title" :city="card.location.city" :district="card.location.district"
+                            :price="card.price" :fav="false" />
                     </v-col>
                 </v-row>
-
             </div>
-            <div class="pagination">
-                <VPagination v-model="currentPage" :length="totalPages" :total-visible="7" prev-icon="mdi-menu-left"
-                    next-icon="mdi-menu-right"></VPagination>
+            <div class="pagination mt-8">
+                <VPagination v-model="currentPage" :length="pagination.totalPages" :total-visible="7"
+                    prev-icon="mdi-menu-left" next-icon="mdi-menu-right" @input="fetchProperties"></VPagination>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import axios from '@/plugins/axios';
 import AppHeader from '@/components/_Layout/AppHeader.vue';
 import CardComponent from '@/components/Widgets/CardComponent.vue';
+import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
 
 export default {
     name: 'SearchedPage',
     components: {
         AppHeader,
-        CardComponent
+        CardComponent,
+        ErrorDialog
     },
     data() {
         return {
-            recievedData: {
+            properties: [],
+            loading: true,
+            currentPage: 1,
+            pagination: {
+                totalPages: 1,
+                totalProperties: 0
+            },
+            filters: {
                 city: '',
                 district: '',
                 status: '',
-                priceFrom: 0,
-                priceTo: 0,
+                minPrice: 0,
+                maxPrice: 0,
                 bathrooms: 0,
                 bedrooms: 0,
                 radius: 0,
             },
-            cards: [],
-            currentPage: 1,
-            totalPages: 52,
-            counter: 0,//delete dummy data
+            errorData: { type: '', message: '' },
         }
     },
-    mounted() {
+    created() {
+        // Parse route query parameters
         Object.keys(this.$route.query).forEach((key) => {
-            if (key in this.recievedData) {
-                this.recievedData[key] = this.$route.query[key];
+            if (key in this.filters) {
+                // Convert to appropriate type
+                this.filters[key] = this.$route.query[key];
             }
         });
-        console.log(this.recievedData);
 
-        for (let i = 0; i < 8; i++) {
-        const newCardIndex = this.counter + 1;
-        this.cards.push({
-        id: newCardIndex,
-        title: `Ad-${newCardIndex}`,
-        city: `City${newCardIndex}`,
-        district: `District${newCardIndex}`,
-        price: this.getRandomPrice(),
-        imageUrl: 'bg-image.jpeg',
-        fav: false
-      });
-      this.counter++;
-    }
-  },
+        // Fetch properties on component creation
+        this.fetchProperties();
+    },
     methods: {
-        getRandomPrice() {
-        return Math.floor(Math.random() * 1000000) + 100000;
-        },
+        async fetchProperties() {
+            this.loading = true;
+            try {
+                // Construct query parameters
+                const params = {
+                    page: this.currentPage,
+                    city: this.filters.city,
+                    district: this.filters.district,
+                    status: this.filters.status,
+                    minPrice: this.filters.minPrice,
+                    maxPrice: this.filters.maxPrice,
+                    bathrooms: this.filters.bathrooms,
+                    bedrooms: this.filters.bedrooms,
+                    radius: this.filters.radius
+                };
 
+                // Remove undefined or empty values
+                Object.keys(params).forEach(key =>
+                    (params[key] === '' || params[key] === 0) && delete params[key]
+                );
+
+                // Make API call
+                const response = await axios.get('/api/property', { params });
+
+                // Update component data
+                this.properties = response.data.properties;
+                this.pagination = response.data.pagination;
+
+                if (this.properties.length === 0) {
+                    this.showErrorDialog('Info', 'No properties found');
+                    setTimeout(() => {
+                        this.$router.push('/');
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                this.showErrorDialog('Error', 'Failed to fetch properties');
+                setTimeout(() => {
+                this.$router.push('/');
+                }, 2000);
+            } finally {
+                this.loading = false;
+            }
+        },
+        showErrorDialog(type, message) {
+            this.errorData = { type, message };
+            this.$refs.errorDialog.show();
+        },
     }
 }
-
 </script>
 
 <style scoped>

@@ -1,14 +1,20 @@
 <template>
   <div class="card">
-    <img :src="require(`@/assets/${imageUrl}`)" :alt="title">
+    <v-img
+      :src="require(`@/assets/${imageUrl}`)"
+      :alt="title"
+      class="vimg"
+    ></v-img>
+
     <div class="card-content">
       <h3>{{ title }}</h3>
       <div class="row">
         <div class="col1">
-          <p>{{ district }},{{ city }}</p>
+          <p>{{ district }}</p>
+          <p>,{{ city }}</p>
           <p>Price:{{ price }}$</p>
         </div>
-        <div class="col2">
+        <div class="col2 mt-3">
           Add to fav.
           <v-btn icon :color="color" @click="addToFavorites()">
             <v-icon >mdi-heart</v-icon> 
@@ -112,13 +118,14 @@ export default {
   align-items: center;
 }
 
-.card img {
+.vimg {
   display: flex;
   margin-top: 5%;
   width: 90%;
 }
 
 .row {
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: row;
   font-size: 0.8rem;
@@ -126,7 +133,13 @@ export default {
   align-items: flex-start;
   gap: 1rem;
 }
+.col1{
+  flex:1;
+}
 
+.col2{
+  flex:1.5;
+}
 
 .col1 p {
   margin-top: 0.4rem;
