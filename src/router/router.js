@@ -53,6 +53,10 @@ const routes = [
       path: '/my-estate',
       name: 'MyEstate',
       component: MyEstatePage
+    },
+    {
+      path: '*',
+      redirect: '/'
     }
 
 ];

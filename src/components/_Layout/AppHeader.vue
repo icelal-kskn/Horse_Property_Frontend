@@ -5,17 +5,14 @@
         <a href="/"><img alt="Home Real Estate" class="logo-image" src="../../assets/logo.png"></a>
       </div>
       <div class="nav-menu" v-if="!signed">
-          <a href="/sign-in" class="sign-in">Sign In</a>
-          <a href="/register" class="register">Register</a>
+        <a href="/sign-in" class="sign-in">Sign In</a>
+        <a href="/register" class="register">Register</a>
       </div>
       <div class="nav-menu" v-else>
         <v-menu offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-avatar
-              v-bind="attrs"
-              v-on="on"
-              class=""
-            > <img src="../../assets/dummyAvatar.png" alt="Avatar"></v-avatar>
+            <v-avatar v-bind="attrs" v-on="on" class=""> <img src="../../assets/dummyAvatar.png"
+                alt="Avatar"></v-avatar>
           </template>
           <v-list>
             <v-list-item link href="/my-profile">
@@ -42,21 +39,37 @@
 </template>
 
 <script>
+import axios from '@/plugins/axios';
+
 export default {
   name: 'AppHeader',
   mounted() {
     this.signed = localStorage.getItem('token') ? true : false;
   },
-  data(){
-    return{
+  data() {
+    return {
       signed: false,
     }
   },
   methods: {
-    logout(){
-      localStorage.removeItem('token');
-      this.signed = false;
-      this.$router.push('/sign-in');
+    async logout() {
+      try {
+        const response = await axios.post('api/user/logout')
+        if (response.status !== 200) {
+          console.error("Unexpected status code:", response.status);
+          return;
+        }
+        // Başarılı çıkış
+        localStorage.removeItem('token');
+        this.$router.push('/sign-in');
+      } catch (error) {
+        if (error.response?.status === 401) {
+          console.error("Unauthorized access:", error.response.data.message);
+          this.$router.push('/sign-in');
+        } else {
+          console.error("Unexpected error:", error);
+        }
+      }
     },
   }
 };
@@ -103,7 +116,7 @@ nav {
   text-decoration: none;
   justify-content: center;
   cursor: pointer;
-  width: 5rem ;
+  width: 5rem;
   height: 2.5rem;
   font-size: 1rem;
   font-weight: 500;
@@ -114,7 +127,7 @@ nav {
 }
 
 
-.sign-in{
+.sign-in {
   background-color: #FFFFFFCC;
   color: #2C2C2C;
 }
@@ -123,7 +136,7 @@ nav {
   color: rgba(117, 115, 115, 0.902);
 }
 
-.register{
+.register {
   background-color: #2C2C2C;
   color: #fff;
 }

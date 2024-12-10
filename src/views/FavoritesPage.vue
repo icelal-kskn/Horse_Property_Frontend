@@ -35,7 +35,9 @@ export default{
         checkUserLogin(){
             if(!localStorage.getItem('token')){
                 this.showErrorDialog('Error', 'You are not logged in. Please sign in to continue.');
-                this.$router.push('/sign-in');
+                setTimeout(() => {
+                this.$router.push('/');
+                }, 2000);
             }
         },
         showErrorDialog(type, message) {
