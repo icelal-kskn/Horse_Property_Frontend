@@ -16,7 +16,7 @@
         </div>
         <div class="col2 mt-3">
           Add to fav.
-          <v-btn icon :color="color" @click="addToFavorites()">
+          <v-btn icon :color="color" @click="changeFavoriteStatus()">
             <v-icon >mdi-heart</v-icon> 
           </v-btn>
           <button @click="detailClicked()" class="wiew-more-button">View More</button>
@@ -49,9 +49,14 @@
 </template>
 
 <script>
+import axios from '@/plugins/axios';
 export default {
   name: 'CardComponent',
   props: {
+    id: {
+      type: String,
+      required: true
+    },
     imageUrl: {
       type: String,
       required: true
@@ -86,21 +91,76 @@ export default {
     }
   },
   mounted(){
-    console.log(this.isFavorite)
+    //TODO: check token status
+    this.isFavoritedBefore(this.$props.id);
   },
   methods: {
     detailClicked() {
       this.dialog = true;
+      console.log("id",this.$props.id);
     },
     detailClosed() {
       this.dialog = false;
       console.log('Close clicked');
     },
-    addToFavorites() {
+    changeFavoriteStatus() {
+      try{
+        if (this.isFavorite) {
+        this.removeFromFavorites();
+      } else {
+        this.addToFavorites();
+      }
       this.isFavorite = !this.isFavorite;
       this.color = this.isFavorite ?  'pink' : 'black';
-      console.log(this.isFavorite);
+
+      }catch(error){
+        console.log(error);
+        setTimeout(() => {
+          this.$emit('showErrorDialog', 'Error', 'An error occurred while changing favorites.');
+        }, 2000);
+      }
     },
+    async addToFavorites() {
+      try{
+        const response = await axios.post('api/user/favorite', {
+        propertyId: this.$props.id
+      });
+      console.log(this.isFavorite , response.data);
+      }
+      catch(error){
+        console.log(error);
+        setTimeout(() => {
+          this.$emit('showErrorDialog', 'Error', 'An error occurred while adding to favorites.');
+        }, 2000);
+      }
+    },
+    async removeFromFavorites() {
+      try{
+        const response = await axios.delete('api/user/favorite/',{
+          data: { propertyId: this.$props.id }
+        });
+        console.log(this.isFavorite , response.data);
+      }
+      catch(error){
+        console.log(error);
+        setTimeout(() => {
+          this.$emit('showErrorDialog', 'Error', 'An error occurred while removing from favorites.');
+        }, 2000);
+      }
+    },
+    async isFavoritedBefore(id) {
+      await axios.get(`api/user/favorite/${id}`)
+      .then(response => {
+        this.isFavorite = response.data;
+        this.color = this.isFavorite ?  'pink' : 'black';
+      })
+      .catch(error => {
+        console.log(error);
+        setTimeout(() => {
+          this.$emit('showErrorDialog', 'Error', 'An error occurred while checking favorites.');
+        }, 2000);
+      });
+    }
   },
 }
 </script>

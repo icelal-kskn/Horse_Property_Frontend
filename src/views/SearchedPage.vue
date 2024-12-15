@@ -10,15 +10,15 @@
 
                 <v-row>
                     <v-col v-for="card in properties" :key="card._id" cols="12" sm="6" md="4" lg="3">
-                        <CardComponent
-                            :imageUrl="card.images && card.images.length > 0 ? card.images[0] : 'default-image.jpg'"
+                        <CardComponent :id="card._id"
+                            :imageUrl="card.images && card.images.length > 0 ? card.images[0] : 'bg-image.jpeg'"
                             :title="card.title" :city="card.location.city" :district="card.location.district"
                             :price="card.price" :fav="false" />
                     </v-col>
                 </v-row>
             </div>
             <div class="pagination mt-8">
-                <VPagination v-model="currentPage" :length="pagination.totalPages" :total-visible="7"
+                <VPagination v-model="currentPage" :length="pagination.totalPages" :total-visible="8"
                     prev-icon="mdi-menu-left" next-icon="mdi-menu-right" @input="fetchProperties"></VPagination>
             </div>
         </div>
@@ -107,11 +107,11 @@ export default {
                         this.$router.push('/');
                     }, 2000);
                 }
-                
+
             } catch (error) {
                 this.showErrorDialog('Error', 'Failed to fetch properties');
                 setTimeout(() => {
-                this.$router.push('/');
+                    this.$router.push('/');
                 }, 2000);
             } finally {
                 this.loading = false;
