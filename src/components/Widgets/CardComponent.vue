@@ -1,10 +1,8 @@
 <template>
+
   <div class="card">
-    <v-img
-      :src="require(`@/assets/${imageUrl}`)"
-      :alt="title"
-      class="vimg"
-    ></v-img>
+    <error-dialog ref="errorDialog" :error="errorData" />
+    <v-img :src="require(`@/assets/${imageUrl}`)" :alt="title" class="vimg"></v-img>
 
     <div class="card-content">
       <h3>{{ title }}</h3>
@@ -17,7 +15,7 @@
         <div class="col2 mt-3">
           Add to fav.
           <v-btn icon :color="color" @click="changeFavoriteStatus()">
-            <v-icon >mdi-heart</v-icon> 
+            <v-icon>mdi-heart</v-icon>
           </v-btn>
           <button @click="detailClicked()" class="wiew-more-button">View More</button>
         </div>
@@ -50,8 +48,12 @@
 
 <script>
 import axios from '@/plugins/axios';
+import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
 export default {
   name: 'CardComponent',
+  components: {
+    ErrorDialog,
+  },
   props: {
     id: {
       type: String,
@@ -77,7 +79,7 @@ export default {
       type: Number,
       required: true
     },
-    fav:{
+    fav: {
       type: Boolean,
       required: true,
       default: false
@@ -87,33 +89,41 @@ export default {
     return {
       dialog: false,
       color: 'black',
-      isFavorite: this.$props.fav
+      isFavorite: this.$props.fav,
+      token: localStorage.getItem('token'),
+      errorData: { type: '', message: '' },
     }
   },
-  mounted(){
+  mounted() {
     //TODO: check token status
-    this.isFavoritedBefore(this.$props.id);
+    if (this.token) {
+      this.isFavoritedBefore(this.$props.id);
+    }
   },
   methods: {
     detailClicked() {
       this.dialog = true;
-      console.log("id",this.$props.id);
+      console.log("id", this.$props.id);
     },
     detailClosed() {
       this.dialog = false;
       console.log('Close clicked');
     },
     changeFavoriteStatus() {
-      try{
-        if (this.isFavorite) {
-        this.removeFromFavorites();
-      } else {
-        this.addToFavorites();
+      if (!this.token) {
+        this.showErrorDialog('Error', 'You are not logged in. Please sign in to continue.');
+        return;
       }
-      this.isFavorite = !this.isFavorite;
-      this.color = this.isFavorite ?  'pink' : 'black';
+      try {
+        if (this.isFavorite) {
+          this.removeFromFavorites();
+        } else {
+          this.addToFavorites();
+        }
+        this.isFavorite = !this.isFavorite;
+        this.color = this.isFavorite ? 'pink' : 'black';
 
-      }catch(error){
+      } catch (error) {
         console.log(error);
         setTimeout(() => {
           this.$emit('showErrorDialog', 'Error', 'An error occurred while changing favorites.');
@@ -121,13 +131,13 @@ export default {
       }
     },
     async addToFavorites() {
-      try{
+      try {
         const response = await axios.post('api/user/favorite', {
-        propertyId: this.$props.id
-      });
-      console.log(this.isFavorite , response.data);
+          propertyId: this.$props.id
+        });
+        console.log(this.isFavorite, response.data);
       }
-      catch(error){
+      catch (error) {
         console.log(error);
         setTimeout(() => {
           this.$emit('showErrorDialog', 'Error', 'An error occurred while adding to favorites.');
@@ -135,13 +145,13 @@ export default {
       }
     },
     async removeFromFavorites() {
-      try{
-        const response = await axios.delete('api/user/favorite/',{
+      try {
+        const response = await axios.delete('api/user/favorite/', {
           data: { propertyId: this.$props.id }
         });
-        console.log(this.isFavorite , response.data);
+        console.log(this.isFavorite, response.data);
       }
-      catch(error){
+      catch (error) {
         console.log(error);
         setTimeout(() => {
           this.$emit('showErrorDialog', 'Error', 'An error occurred while removing from favorites.');
@@ -150,18 +160,23 @@ export default {
     },
     async isFavoritedBefore(id) {
       await axios.get(`api/user/favorite/${id}`)
-      .then(response => {
-        this.isFavorite = response.data;
-        this.color = this.isFavorite ?  'pink' : 'black';
-      })
-      .catch(error => {
-        console.log(error);
-        setTimeout(() => {
-          this.$emit('showErrorDialog', 'Error', 'An error occurred while checking favorites.');
-        }, 2000);
-      });
-    }
+        .then(response => {
+          this.isFavorite = response.data;
+          this.color = this.isFavorite ? 'pink' : 'black';
+        })
+        .catch(error => {
+          console.log(error);
+          setTimeout(() => {
+            this.$emit('showErrorDialog', 'Error', 'An error occurred while checking favorites.');
+          }, 2000);
+        });
+    },
+    showErrorDialog(type, message) {
+      this.errorData = { type, message };
+      this.$refs.errorDialog.show();
+    },
   },
+
 }
 </script>
 
@@ -193,12 +208,13 @@ export default {
   align-items: flex-start;
   gap: 1rem;
 }
-.col1{
-  flex:1;
+
+.col1 {
+  flex: 1;
 }
 
-.col2{
-  flex:1.5;
+.col2 {
+  flex: 1.5;
 }
 
 .col1 p {
@@ -229,5 +245,4 @@ export default {
   padding: 8px 16px;
   cursor: pointer;
 }
-
 </style>
