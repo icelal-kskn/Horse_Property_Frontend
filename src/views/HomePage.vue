@@ -73,7 +73,7 @@
           <div class="card-container">
             <div class="card-row" v-for="card in cards" :key="card.id">
 
-              <CardComponent :imageUrl="card.imageUrl" :title="card.title" :city="card.city" :district="card.district"
+              <CardComponent :imageUrl="card.imageUrl" :id="card.id" :title="card.title" :city="card.city" :district="card.district"
                 :price="card.price" :fav="card.fav" />
             </div>
 
@@ -106,7 +106,7 @@ export default {
     for (let i = 0; i < 2; i++) {
       const newCardIndex = this.counter + 1;
       this.cards.push({
-        id: newCardIndex,
+        id: `fakeId-${newCardIndex}`,
         title: `Ad-${newCardIndex}`,
         city: `City${newCardIndex}`,
         district: `District${newCardIndex}`,
