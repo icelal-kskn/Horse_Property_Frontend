@@ -5,13 +5,15 @@
         </div>
         <div class="content">
             <error-dialog ref="errorDialog" :error="errorData" />
-            <div v-if="loading" class="loading">Loading...</div>
+            <div v-if="loading" class="loading">
+                <v-progress-circular indeterminate></v-progress-circular>
+            </div>
             <div v-else>
 
                 <v-row>
                     <v-col v-for="card in properties" :key="card._id" cols="12" sm="6" md="4" lg="3">
                         <CardComponent :id="card._id"
-                            :imageUrl="card.images && card.images.length > 0 ? card.images[0] : 'bg-image.jpeg'"
+                            :imageUrl="card?.images?.filter(img => img)?.[0] || 'bg-image.jpeg'"
                             :title="card.title" :city="card.location.city" :district="card.location.district"
                             :price="card.price" :fav="false" />
                     </v-col>
@@ -100,7 +102,7 @@ export default {
                 // Update component data
                 this.properties = response.data.properties;
                 this.pagination = response.data.pagination;
-
+                console.log(this.properties);
                 if (this.properties.length === 0) {
                     this.showErrorDialog('Info', 'No properties found');
                     setTimeout(() => {

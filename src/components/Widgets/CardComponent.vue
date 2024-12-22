@@ -61,7 +61,8 @@ export default {
     },
     imageUrl: {
       type: String,
-      required: true
+      required: true,
+      default: 'bg-image.jpeg',
     },
     title: {
       type: String,

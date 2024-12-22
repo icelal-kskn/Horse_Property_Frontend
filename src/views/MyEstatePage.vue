@@ -6,17 +6,26 @@
         </div>
 
         <div class="content">
-            <div v-if="loading" class="loading">Loading...</div>
+            <div v-if="loading" class="text-center">
+                <v-progress-circular indeterminate></v-progress-circular>
+            </div>
             <div v-else>
-                <v-row v-if="properties.length < 1">
+                <v-container v-if="!properties">
                     <v-col cols="12">
                         <h2>You have not posted any properties yet.</h2>
                         <v-btn @click="openPropertyPostDialog()">Free Post</v-btn>
                     </v-col>
-                </v-row>
-                <v-row v-else>
-
-                </v-row>
+                </v-container>
+                <v-container v-else>
+                    <v-row class="mb-4">
+                        <v-col cols="10">
+                            <h2 class="ml-8 d-flex justify-start">My Properties</h2>
+                        </v-col>
+                        <v-col cols="2"> <v-btn @click="openPropertyPostDialog()">Free Post</v-btn> </v-col>
+                    </v-row>
+                    <LongCardComponent v-for="property in properties" :key="property._id" :property="property"
+                        @edit="editProperty(property)" @delete="deleteProperty(property._id)" />
+                </v-container>
             </div>
 
             <!-- Yeni Property Dialog -->
@@ -28,37 +37,98 @@
                             <v-row max-width="150">
                                 <v-col class="mt-12">
                                     <v-row class="mb-4">
-                                        <div class="ml-4" v-for="(image, index) in images" :key="index">
+                                        <div class="ml-4" v-for="(image, index) in PostImages" :key="index">
                                             <v-img :src="image.url" max-width="70" max-height="70"
                                                 class="cursor-pointer" @click="triggerFileInput"></v-img>
                                         </div>
                                         <input type="file" ref="fileInput" accept="image/*" style="display: none"
                                             @change="onFilesSelected" multiple />
                                     </v-row>
-                                    <v-select v-model="newPost.city" :items="cityItems" label="City" 
-                                        :rules="rules.required" outlined
-                                        item-text="text" item-value="value"></v-select>
+                                    <v-text-field v-model="newPost.title" label="Title" type="text"
+                                        :rules="rules.required" outlined></v-text-field>
+                                    <v-select v-model="newPost.city" :items="cityItems" label="City"
+                                        :rules="rules.required" outlined item-text="text" item-value="value"></v-select>
                                     <v-text-field v-model="newPost.district" label="District" type="text"
                                         :rules="rules.required" outlined></v-text-field>
-                                    <v-select v-model="newPost.status" label="Status" :rules="rules.required"
-                                        outlined :items="statusItems"
-                                        item-text="text" item-value="value"
-                                        ></v-select>
+                                    <v-select v-model="newPost.status" label="Status" :rules="rules.required" outlined
+                                        :items="statusItems" item-text="text" item-value="value"></v-select>
                                     <v-text-field v-model="newPost.price" label="Price" type="number" prefix="$"
                                         :rules="rules.required" outlined></v-text-field>
+
+                                </v-col>
+                                <v-col class="mt-8">
                                     <v-text-field v-model.number="newPost.bathrooms" label="Bathroom(s)" type="number"
                                         :rules="rules.required" outlined></v-text-field>
                                     <v-text-field v-model.number="newPost.bedrooms" label="Bedroom(s)" type="number"
                                         :rules="rules.required" outlined></v-text-field>
-                                </v-col>
-                                <v-col class="mt-8">
                                     <v-text-field v-model="newPost.adress" label="Adress" type="text"
                                         :rules="rules.required" outlined></v-text-field>
+                                    <v-select v-model="newPost.type" label="Type" :rules="rules.required" outlined
+                                        :items="typeItems" item-text="text" item-value="value"></v-select>
                                     <v-text-field v-model="newPost.description" class="desc" label="Description"
                                         type="text" :rules="rules.required" outlined></v-text-field>
                                 </v-col>
 
                             </v-row>
+
+                            <div style="display: flex; justify-content: end;">
+                                <v-btn @click="postPropertyButton" color="#010237C4"
+                                    style="border: 1px solid black; color: white;">
+                                    Post Free
+                                </v-btn>
+                            </div>
+                        </v-form>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
+            <v-dialog v-model="editDialog">
+                <v-card>
+                    <v-card-title>Edit Property</v-card-title>
+                    <v-card-text>
+                        <v-form ref="editForm" v-model="formValid">
+                            <v-row max-width="150">
+                                <v-col class="mt-12">
+                                    <!-- <v-row class="mb-4">
+                                        <div class="ml-4" v-for="(image, index) in PostImages" :key="index">
+                                            <v-img :src="image.url" max-width="70" max-height="70"
+                                                class="cursor-pointer" @click="triggerFileInput"></v-img>
+                                        </div>
+                                        <input type="file" ref="fileInput" accept="image/*" style="display: none"
+                                            @change="onFilesSelected" multiple />
+                                    </v-row> -->
+                                    <v-text-field v-model="editPost.title" label="Title" type="text"
+                                        :rules="rules.required" outlined></v-text-field>
+                                    <v-select v-model="editPost.location.city" :items="cityItems" label="City"
+                                        :rules="rules.required" outlined item-text="text" item-value="value"></v-select>
+                                    <v-text-field v-model="editPost.location.district" label="District" type="text"
+                                        :rules="rules.required" outlined></v-text-field>
+                                    <v-select v-model="editPost.status" label="Status" :rules="rules.required" outlined
+                                        :items="statusItems" item-text="text" item-value="value"></v-select>
+                                    <v-text-field v-model="editPost.price" label="Price" type="number" prefix="$"
+                                        :rules="rules.required" outlined></v-text-field>
+                                </v-col>
+
+                                <v-col class="mt-8">
+                                    <v-text-field v-model.number="editPost.bathrooms" label="Bathroom(s)" type="number"
+                                        :rules="rules.required" outlined></v-text-field>
+                                    <v-text-field v-model.number="editPost.bedrooms" label="Bedroom(s)" type="number"
+                                        :rules="rules.required" outlined></v-text-field>
+                                    <v-text-field v-model="editPost.location.address" label="Adress" type="text"
+                                        :rules="rules.required" outlined></v-text-field>
+                                    <v-select v-model="editPost.type" label="Type" :rules="rules.required" outlined
+                                        :items="typeItems" item-text="text" item-value="value"></v-select>
+                                    <v-text-field v-model="editPost.description" class="desc" label="Description"
+                                        type="text" :rules="rules.required" outlined></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <div style="display: flex; justify-content: end;">
+                                <v-btn @click="editPropertyButton" color="#010237C4"
+                                    style="border: 1px solid black; color: white;">
+                                    Edit
+                                </v-btn>
+                            </div>
                         </v-form>
                     </v-card-text>
                 </v-card>
@@ -73,49 +143,77 @@
 <script>
 import AppHeader from "@/components/_Layout/AppHeader.vue";
 import ErrorDialog from "@/components/Widgets/WarningDialog.vue";
+import LongCardComponent from '@/components/Widgets/LongCardComponent.vue';
+import axios from "@/plugins/axios";
 
 export default {
     name: "MyEstatePage",
     components: {
         AppHeader,
         ErrorDialog,
+        LongCardComponent,
     },
     data() {
         const dummyImageUrl = require("@/assets/dummyUploadPNG.png");
         return {
-            images: Array(4).fill({ url: dummyImageUrl, file: null }),
+            PostImages: Array(4).fill({ url: dummyImageUrl, file: null }),
             errorData: { type: "", message: "" },
             newPost: {
                 city: "",
                 district: "",
+                status: "",
+                title: "",
                 zip: "",
+                type: "",
                 price: "",
                 bathrooms: "",
                 bedrooms: "",
-                address: "",
+                adress: "",
                 description: "",
+            },
+            editPost: {
+                location: {
+                    city: "",
+                    district: "",
+                    address: "",
+                },
+                type: "",
+                title: "",
+                status: "",
+                price: "",
+                bathrooms: "",
+                bedrooms: "",
+                description: "",
+                images: Array(4).fill({ url: dummyImageUrl, file: null }),
             },
             loading: false,
             properties: [],
+            editDialog: false,
             propertyPostDialog: false,
             detailPropertyDialog: false,
             formValid: false,
             rules: {
                 required: [(v) => !!v || "This field is required"]
             },
-            cityItems:[{value:"istanbul" , text: "Istanbul"},
-                        {value:"ankara" , text: "Ankara"},
-                        {value:"manisa" , text: "Manisa"},
+            cityItems: [{ value: "Istanbul", text: "İstanbul" },
+            { value: "Ankara", text: "Ankara" },
+            { value: "Manisa", text: "Manisa" },
             ],
-            statusItems:[{value:"for-sale" , text: "For Sale"},
-                        {value:"for-rent" , text: "For Rent"},
-                        {value:"sold" , text: "Sold"},
-                        {value:"rented" , text: "Rented"},
+            typeItems: [{ value: "apartment", text: "Apartment" },
+            { value: "villa", text: "Villa" },
+            { value: "house", text: "House" },
+            { value: "land", text: "Land" },
+            ],
+            statusItems: [{ value: "for-sale", text: "For Sale" },
+            { value: "for-rent", text: "For Rent" },
+            { value: "sold", text: "Sold" },
+            { value: "rented", text: "Rented" },
             ],
         };
     },
     mounted() {
         this.checkUserLogin();
+        this.fetchMyProperties();
     },
     methods: {
         checkUserLogin() {
@@ -125,6 +223,20 @@ export default {
                     this.$router.push("/");
                 }, 2000);
             }
+        },
+        async fetchMyProperties() {
+            this.loading = true;
+            try {
+                const response = await axios.get("api/property/my");
+                this.properties = response.data.properties;
+                console.log("My properties:", this.properties);
+            } catch (error) {
+                this.showErrorDialog("Error", "Failed to fetch properties");
+                console.log("Fetch my properties error:", error);
+            } finally {
+                this.loading = false;
+            }
+
         },
         showErrorDialog(type, message) {
             this.errorData = { type, message };
@@ -156,7 +268,7 @@ export default {
                     if (index < 4) {
                         const reader = new FileReader();
                         reader.onload = (e) => {
-                            this.$set(this.images, index, {
+                            this.$set(this.PostImages, index, {
                                 url: e.target.result, // Yüklenen dosyanın önizleme URL'si
                                 file: file,          // Dosya objesi
                             });
@@ -164,13 +276,90 @@ export default {
                         reader.readAsDataURL(file);
                     }
                 });
-            } catch(error) {
-            this.showErrorDialog("Error", "Failed to process files.");
-            console.log("File processing error:", error);
-        }
+            } catch (error) {
+                this.showErrorDialog("Error", "Failed to process files.");
+                console.log("File processing error:", error);
+            }
 
+        },
+        async postPropertyButton() {
+            if (!this.formValid) {
+                console.log("Form is invalid");
+                return;
+            }
+            try {
+                const payload = {
+                    location: {
+                        city: this.newPost.city,
+                        district: this.newPost.district,
+                        address: this.newPost.adress,
+                    },
+                    type: this.newPost.type,
+                    title: this.newPost.title,
+                    status: this.newPost.status,
+                    price: this.newPost.price,
+                    bathrooms: this.newPost.bathrooms,
+                    bedrooms: this.newPost.bedrooms,
+                    description: this.newPost.description,
+                    images: this.PostImages.map((image) => image.file),
+                };
+                console.log("Post property payload:", payload);
+                const response = await axios.post('api/property', payload);
+                console.log("Property posted successfully:", response.data);
+                this.propertyPostDialog = false;
+                window.location.reload();
+            } catch (error) {
+                this.showErrorDialog("Error", "Failed to post property.");
+                console.log("Post property error:", error);
+            }
+        },
+        async editPropertyButton() {
+            if (!this.formValid) {
+                console.log("Form is invalid");
+                return;
+            }
+
+            try {
+                const payload = {
+                    location: {
+                        city: this.editPost.location.city,
+                        district: this.editPost.location.district,
+                        address: this.editPost.location.adress,
+                    },
+                    type: this.editPost.type,
+                    title: this.editPost.title,
+                    status: this.editPost.status,
+                    price: this.editPost.price,
+                    bathrooms: this.editPost.bathrooms,
+                    bedrooms: this.editPost.bedrooms,
+                    description: this.editPost.description,
+                    images: this.editPost.images.map((image) => image.file),
+                };
+                console.log("Edit property payload:", payload);
+                const response = await axios.put('api/property', payload);
+                console.log("Property edited successfully:", response.data);
+
+            } catch (error) {
+                this.showErrorDialog("Error", "Failed to edit property.");
+                console.log("Edit property error:", error);
+            }
+        },
+        async deleteProperty(id) {
+            if (confirm('Are you sure you want to delete this property?')) {
+                try {
+                    await axios.delete(`/api/property/${id}`)
+                    this.properties = this.properties.filter(p => p._id !== id)
+                } catch (error) {
+                    console.error('Error deleting property:', error)
+                }
+            }
+        },
+        async editProperty(property) {
+            this.editDialog = true;
+            this.editPost = property;
+            console.log(property, this.editPost);
+        }
     },
-},
 };
 </script>
 
