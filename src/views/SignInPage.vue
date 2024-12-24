@@ -22,6 +22,7 @@
         </div>
       </v-form>
     </div>
+    <AppFooter />
   </div>
 </template>
 
@@ -29,12 +30,14 @@
 import AppHeader from '@/components/_Layout/AppHeader'
 import axios from '@/plugins/axios'
 import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
+import AppFooter from '@/components/_Layout/AppFooter.vue';
 
 export default {
   name: 'SignInPage',
   components: {
     AppHeader,
     ErrorDialog,
+    AppFooter,
   },
   data() {
     return {

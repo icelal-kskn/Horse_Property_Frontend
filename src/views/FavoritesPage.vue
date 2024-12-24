@@ -26,6 +26,7 @@
                     prev-icon="mdi-menu-left" next-icon="mdi-menu-right" @input="fetchFavoriteProperties"></VPagination>
             </div>
         </div>
+        <AppFooter />
     </div>
 </template>
 
@@ -34,10 +35,12 @@ import AppHeader from '@/components/_Layout/AppHeader.vue';
 import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
 import CardComponent from '@/components/Widgets/CardComponent.vue';
 import axios from '@/plugins/axios';
+import AppFooter from '@/components/_Layout/AppFooter.vue';
 
 export default {
     name: 'FavoritesPage',
     components: {
+        AppFooter,
         AppHeader,
         ErrorDialog,
         CardComponent,

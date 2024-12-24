@@ -33,7 +33,7 @@
             </v-container>
 
         </div>
-
+        <AppFooter />
     </div>
 </template>
 
@@ -41,12 +41,13 @@
 import { Chart, registerables } from "chart.js";
 import AppHeader from '@/components/_Layout/AppHeader.vue';
 import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
-
+import AppFooter from '@/components/_Layout/AppFooter.vue'
 Chart.register(...registerables);
 
 export default {
     name: 'DashboardPage',
     components: {
+        AppFooter,
         AppHeader,
         ErrorDialog,
     },

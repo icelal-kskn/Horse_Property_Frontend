@@ -10,7 +10,7 @@
                 <v-progress-circular indeterminate></v-progress-circular>
             </div>
             <div v-else>
-                <v-container v-if="!properties">
+                <v-container v-if="properties.length == 0">
                     <v-col cols="12">
                         <h2>You have not posted any properties yet.</h2>
                         <v-btn @click="openPropertyPostDialog()">Free Post</v-btn>
@@ -89,14 +89,14 @@
                         <v-form ref="editForm" v-model="formValid">
                             <v-row max-width="150">
                                 <v-col class="mt-12">
-                                    <!-- <v-row class="mb-4">
+                                    <v-row class="mb-4">
                                         <div class="ml-4" v-for="(image, index) in PostImages" :key="index">
                                             <v-img :src="image.url" max-width="70" max-height="70"
                                                 class="cursor-pointer" @click="triggerFileInput"></v-img>
                                         </div>
                                         <input type="file" ref="fileInput" accept="image/*" style="display: none"
                                             @change="onFilesSelected" multiple />
-                                    </v-row> -->
+                                    </v-row>
                                     <v-text-field v-model="editPost.title" label="Title" type="text"
                                         :rules="rules.required" outlined></v-text-field>
                                     <v-select v-model="editPost.location.city" :items="cityItems" label="City"
@@ -137,6 +137,7 @@
             <v-dialog v-model="detailPropertyDialog" class="popup-dialog" max-width="500"></v-dialog>
             <error-dialog ref="errorDialog" :error="errorData" />
         </div>
+    <AppFooter />
     </div>
 </template>
 
@@ -145,10 +146,12 @@ import AppHeader from "@/components/_Layout/AppHeader.vue";
 import ErrorDialog from "@/components/Widgets/WarningDialog.vue";
 import LongCardComponent from '@/components/Widgets/LongCardComponent.vue';
 import axios from "@/plugins/axios";
+import AppFooter from "@/components/_Layout/AppFooter.vue";
 
 export default {
     name: "MyEstatePage",
     components: {
+        AppFooter,
         AppHeader,
         ErrorDialog,
         LongCardComponent,
@@ -284,10 +287,25 @@ export default {
         },
         async postPropertyButton() {
             if (!this.formValid) {
-                console.log("Form is invalid");
+                this.showErrorDialog("Info","Form is invalid");
                 return;
             }
             try {
+                const processedImages = this.PostImages
+            .filter(image => image && image.file) // Remove nulls and empty objects
+            .map(image => {
+                // If it's a File object or base64 string, return it directly
+                if (image.file instanceof File) {
+                    return image.file;
+                }
+                // If it's a URL string, return the URL
+                if (typeof image.url === 'string') {
+                    return image.url;
+                }
+                return null;
+            })
+            .filter(Boolean);
+
                 const payload = {
                     location: {
                         city: this.newPost.city,
@@ -301,7 +319,7 @@ export default {
                     bathrooms: this.newPost.bathrooms,
                     bedrooms: this.newPost.bedrooms,
                     description: this.newPost.description,
-                    images: this.PostImages.map((image) => image.file),
+                    images: processedImages
                 };
                 console.log("Post property payload:", payload);
                 const response = await axios.post('api/property', payload);
@@ -315,7 +333,7 @@ export default {
         },
         async editPropertyButton() {
             if (!this.formValid) {
-                console.log("Form is invalid");
+                this.showErrorDialog("Info","Form is invalid");
                 return;
             }
 
@@ -333,12 +351,14 @@ export default {
                     bathrooms: this.editPost.bathrooms,
                     bedrooms: this.editPost.bedrooms,
                     description: this.editPost.description,
-                    images: this.editPost.images.map((image) => image.file),
+                    images: this.editPost.images
+                .filter(img => img && img.url)
+                .map(img => img.url)
                 };
                 console.log("Edit property payload:", payload);
-                const response = await axios.put('api/property', payload);
+                const response = await axios.put(`api/property/${this.editPost._id}`, payload);
                 console.log("Property edited successfully:", response.data);
-
+                window.location.reload();
             } catch (error) {
                 this.showErrorDialog("Error", "Failed to edit property.");
                 console.log("Edit property error:", error);
@@ -356,10 +376,41 @@ export default {
         },
         async editProperty(property) {
             this.editDialog = true;
-            this.editPost = property;
-            console.log(property, this.editPost);
-        }
-    },
+            this.editPost = {
+                ...property,
+                location: {
+                    city: property.location?.city || '',
+                    district: property.location?.district || '',
+                    address: property.location?.address || ''
+                },
+                type: property.type || '',
+                title: property.title || '',
+                status: property.status || '',
+                price: Number(property.price) || 0,
+                bathrooms: Number(property.bathrooms) || 0,
+                bedrooms: Number(property.bedrooms) || 0,
+                description: property.description || '',
+                features: property.features || {},
+                _id: property._id // Ensure ID is copied
+            };
+
+            // Initialize images array
+            this.editPost.images = Array(4).fill(null).map((_, index) => {
+                if (property.images && property.images[index]) {
+                    return {
+                        url: property.images[index].url || property.images[index],
+                        file: null // Reset file since we're editing
+                    };
+                }
+                return {
+                    url: this.dummyImageUrl,
+                    file: null
+                };
+            });
+
+            console.log("Editing property:", this.editPost);
+        },
+    }
 };
 </script>
 

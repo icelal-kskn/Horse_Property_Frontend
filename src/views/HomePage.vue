@@ -88,16 +88,19 @@
         </div>
       </div>
     </div>
+    <AppFooter />
   </div>
 </template>
 
 <script>
 import AppHeader from '@/components/_Layout/AppHeader'
 import CardComponent from '@/components/Widgets/CardComponent';
+import AppFooter from '@/components/_Layout/AppFooter.vue'
 
 export default {
   name: 'HomePage',
   components: {
+    AppFooter,
     AppHeader,
     CardComponent
   },

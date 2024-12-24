@@ -24,6 +24,7 @@
                     prev-icon="mdi-menu-left" next-icon="mdi-menu-right" @input="fetchProperties"></VPagination>
             </div>
         </div>
+       <AppFooter /> 
     </div>
 </template>
 
@@ -32,13 +33,15 @@ import axios from '@/plugins/axios';
 import AppHeader from '@/components/_Layout/AppHeader.vue';
 import CardComponent from '@/components/Widgets/CardComponent.vue';
 import ErrorDialog from '@/components/Widgets/WarningDialog.vue';
+import AppFooter from '@/components/_Layout/AppFooter.vue';
 
 export default {
     name: 'SearchedPage',
     components: {
         AppHeader,
         CardComponent,
-        ErrorDialog
+        ErrorDialog,
+        AppFooter,
     },
     data() {
         return {
