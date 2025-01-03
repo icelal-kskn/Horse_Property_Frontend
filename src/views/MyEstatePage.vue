@@ -95,7 +95,8 @@
                                                 class="cursor-pointer" @click="triggerFileInput"></v-img>
                                         </div>
                                         <input type="file" ref="fileInput" accept="image/*" style="display: none"
-                                            @change="onFilesSelected" multiple />
+                                            @change="onFilesSelected" multiple name="images"/>
+                                        
                                     </v-row>
                                     <v-text-field v-model="editPost.title" label="Title" type="text"
                                         :rules="rules.required" outlined></v-text-field>
